@@ -63,7 +63,11 @@ app.post("/login", (req, res) => {
 })
 
 
-app.get("/lucky-charms", (request, response) => {
+app.get("/lucky-charms", authenticate, (request, response) => {
+    response.json({message: `${request.user.username} found me Lucky Charms`})
+})
+
+function authenticate(request, response, next) {
     const authHeader = request.get('Authorization')
     const token = authHeader.split(' ')[1]
     const secret = process.env.SECRET||"SUPERSECRET!"
@@ -74,11 +78,12 @@ app.get("/lucky-charms", (request, response) => {
             .where({username: payload.username})
             .first()
             .then(user => {
-                response.json({message: `${user.username} found me Lucky Charms`})
+                request.user = user
+                next()
             }).catch(error => {
                 response.json({error: error.message})
             })
     })
-})
+}
 
 app.listen(port)
