@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken')
 const cors = require('cors')
 
 
+
 app.use(bodyParser.json())
 app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -96,4 +97,10 @@ function authenticate(request, response, next) {
     })
 }
 
+const { Model } = require('objection')
+Model.knex(database)
+
+class Stock extends Model {
+    static tableName = "stock"
+}
 app.listen(port)
