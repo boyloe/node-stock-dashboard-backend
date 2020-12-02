@@ -16,25 +16,6 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 const port = process.env.PORT||4000
 
-
-
-// app.post('/users', (req, res) => {
-//     const { user } = req.body
-//     bcrypt.hash(user.password,12)
-//         .then(hashedPassword => {
-//             return database("users")
-//                 .insert({ 
-//                     username: user.username,
-//                     password_hash: hashedPassword
-//                 }).returning("*")            
-//         }).then(users => {
-//             const user = users[0]
-            
-//             res.json({ message: `User ${user.username} has been created.` })
-//         }).catch(error => {
-//             res.json({ error: error.message})
-//         })
-// })
 app.post('/users', (req, res) => {
     const { user } = req.body
     bcrypt.hash(user.password,12)
@@ -92,8 +73,8 @@ app.post("/login", (req, res) => {
 })
 
 
-app.get("/lucky-charms", authenticate, (request, response) => {
-    response.json({message: `${request.user.username} found me Lucky Charms`})
+app.get("/users", authenticate, (request, response) => {
+    response.json({message: `${request.user.username} has been found`})
 })
 
 function authenticate(request, response, next) {
