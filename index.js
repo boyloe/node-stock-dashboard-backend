@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const bcrypt =  require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
+const objectionUnique = require('objection-unique')
 
 
 
@@ -15,7 +16,7 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}))
 
-const port = process.env.PORT||4000
+const port = process.env.PORT || 4000
 
 app.post('/users', (req, res) => {
     const { user } = req.body
@@ -100,7 +101,36 @@ function authenticate(request, response, next) {
 const { Model } = require('objection')
 Model.knex(database)
 
-class Stock extends Model {
+const uniqueStock = objectionUnique({
+    fields: ["symbol", "company_name"],
+    identifiers: ["id"]
+})
+class Stock extends uniqueStock(Model) {
     static tableName = "stock"
+    static jsonSchema = {
+        type: 'object',
+        properties: {
+            symbol: {type: "string"},
+            high: {type: "integer"},
+            low: {type: "integer"},
+            company_name: {type: "string"}
+        },
+        required: ["symbol", "company_name"]
+    }
 }
+
+app.post("/stocks", async (request, response) => {
+    try {
+        const stock = await Stock.query().insert({
+            symbol: request.body.symbol,
+            high: request.body.high,
+            low: request.body.low,
+            company_name: request.body.company_name
+        })
+        response.json({stock})
+    } catch(error) {
+        response.json({error: error.message})
+    }
+})
+
 app.listen(port)

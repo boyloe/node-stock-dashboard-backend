@@ -29,6 +29,7 @@
     "knex": "^0.21.6",
     "nodemon": "^2.0.6",
     "objection": "^2.2.3",
+    "objection-unique": "^1.2.1",
     "pg": "^8.4.1",
     "sqlite3": "^5.0.0"
   }
